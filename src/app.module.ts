@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { V1Module } from '@app/v1/v1.module';
 import { ConfigModule } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
-
+import configuration, { envValidationSchema } from './config/configuration';
 // todo env
 const mongoUri =
   process.env.MONGODB_URI ||
@@ -10,8 +10,12 @@ const mongoUri =
 
 @Module({
   imports: [
+    ConfigModule.forRoot({
+      isGlobal: true,
+      load: [configuration],
+      validationSchema: envValidationSchema,
+    }),
     V1Module,
-    ConfigModule.forRoot(),
     MongooseModule.forRoot(mongoUri, {
       // TODO: REMOVE FOR PRODUCTION
       autoIndex: true,
