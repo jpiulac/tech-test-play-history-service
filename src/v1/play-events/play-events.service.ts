@@ -138,7 +138,7 @@ export class PlayEventsService {
     if (startDate >= endDate) {
       throw new BadRequestException('"from" date must be before "to" date');
     }
-   
+
     this.logger.log(
       `[PlayEventsServicegetMostWatched] Start date: ${startDate.toISOString()}, End date: ${endDate.toISOString()}.`,
     );

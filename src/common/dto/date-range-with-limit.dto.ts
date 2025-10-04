@@ -1,4 +1,11 @@
-import { IsDateString, IsNotEmpty, IsOptional, IsInt, Min, Max } from 'class-validator';
+import {
+  IsDateString,
+  IsNotEmpty,
+  IsOptional,
+  IsInt,
+  Min,
+  Max,
+} from 'class-validator';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
 
@@ -37,4 +44,3 @@ export class DateRangeWithLimitDto {
   @Max(5000)
   limit?: number = 200;
 }
-

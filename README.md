@@ -1,19 +1,10 @@
 # Play History Service
 
-A RESTful API service for tracking and managing user play history events with support for analytics, GDPR compliance, and idempotency guarantees.
-
-## Table of Contents
-
-- [Quick Start](#quick-start)
-- [API Endpoints](#api-endpoints)
-- [Architecture & Design Decisions](#architecture--design-decisions)
-- [Testing](#testing)
-- [Known Limitations](#known-limitations)
-- [Future Improvements](#future-improvements)
+A RESTful API for ingesting and retrieving user play data. Ensures reliability by preventing duplicate writes through content hashing and idempotency keys. Supports efficient cursor-based pagination and GDPR-compliant data deletion.
 
 ## Quick Start
 
-### Prerequisites
+### Dependencies
 
 - Node.js 20+
 - Docker & Docker Compose
@@ -29,18 +20,57 @@ npm install
 docker compose up
 ```
 
-The API will be available at `http://localhost:3000`
+The API will be now available at `http://localhost:3000`
 
 Swagger documentation: `http://localhost:3000/api-docs`
 
-### Local Development
+
+### Local Development with a Docker Database 
 
 ```bash
 docker compose up mongo_db
 
 # Run app without Docker
-MONGODB_URI="mongodb://localhost:27017/play_history_db" npm run start:dev npm run start:dev
+MONGODB_URI="mongodb://localhost:27017/play_history_db" npm run start:dev
 ```
+
+## Testing
+
+### Unit Tests
+
+```bash
+# Run all unit tests
+npm run test
+
+# Watch mode
+npm run test:watch
+
+# Coverage
+npm run test:cov
+```
+
+### E2E Tests
+
+```bash
+# Start test database and run E2E tests
+npm run test:e2e:docker
+
+# Or manually
+docker-compose -f docker-compose.test.yml up -d
+npm run test:e2e
+docker-compose -f docker-compose.test.yml down -v
+```
+
+### Linting
+
+```bash
+# Lint
+npm run lint
+
+# Format with Prettier
+npm run format
+```
+
 
 
 ## API Endpoints
@@ -69,7 +99,7 @@ GET /v1/history/:userId?limit=20&cursor=<cursor>
 
 #### Get Most Watched Content
 ```bash
-GET /v1/history/most-watched?from=2025-09-01T00:00:00Z&to=2025-09-30T23:59:59Z&limit=20
+GET /v1/history/most-watched?from=2025-09-01T00:00:00Z&to=2025-09-30T23:59:59Z&limit=200
 ```
 
 **Query Parameters:**

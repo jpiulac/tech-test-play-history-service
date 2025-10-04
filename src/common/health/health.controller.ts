@@ -1,3 +1,4 @@
+import { ApiResponse } from '@nestjs/swagger';
 import {
   Controller,
   Get,
@@ -13,6 +14,14 @@ export class HealthController {
 
   constructor(@InjectConnection() private connection: Connection) {}
 
+  @ApiResponse({
+    status: 200,
+    description: 'Health check successfully',
+  })
+  @ApiResponse({
+    status: 500,
+    description: 'Health check failed',
+  })
   @Get()
   async check() {
     const response = {

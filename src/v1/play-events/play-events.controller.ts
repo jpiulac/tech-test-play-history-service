@@ -54,6 +54,10 @@ export class PlayEventsController {
     status: 400,
     description: 'Bad Request - Validation error',
   })
+  @ApiResponse({
+    status: 409,
+    description: 'Conflict - Duplicate play event detected (same content hash)',
+  })
   @UseGuards(IdempotencyGuard)
   async createPlayEvent(
     @Body() CreatePlayEventDto: CreatePlayEventDto,
@@ -76,12 +80,19 @@ export class PlayEventsController {
   })
   @ApiResponse({
     status: 400,
-    description: 'Bad Request - Invalid date format or range',
+    description: 'Bad Request - Invalid date format, range, or limit parameter',
+  })
+  @ApiResponse({
+    status: 500,
+    description: 'Internal Server Error - Database aggregation failed',
   })
   async getMostWatched(
     @Query() queryDto: DateRangeWithLimitDto,
   ): Promise<PlayEventMostWatchedResponseWrapperDto> {
-    return await this.playService.getMostWatched(queryDto, queryDto.limit ?? 200);
+    return await this.playService.getMostWatched(
+      queryDto,
+      queryDto.limit ?? 200,
+    );
   }
 
   @Get('history/:userId')
@@ -100,8 +111,12 @@ export class PlayEventsController {
     type: PlayEventHistoryResponseWrapperDto,
   })
   @ApiResponse({
-    status: 404,
-    description: 'User not found or no play history',
+    status: 400,
+    description: 'Bad Request - Invalid cursor or limit parameter',
+  })
+  @ApiResponse({
+    status: 500,
+    description: 'Internal Server Error - Database query failed',
   })
   @ApiQuery({
     name: 'limit',
@@ -125,6 +140,14 @@ export class PlayEventsController {
   @ApiResponse({
     status: HttpStatus.OK,
     description: 'Anonymization job successfully initiated.',
+  })
+  @ApiResponse({
+    status: 400,
+    description: 'Bad Request - Invalid user ID format',
+  })
+  @ApiResponse({
+    status: 500,
+    description: 'Internal Server Error - Anonymization process failed',
   })
   @ApiParam({
     name: 'userId',

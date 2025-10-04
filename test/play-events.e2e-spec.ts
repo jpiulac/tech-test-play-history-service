@@ -222,10 +222,11 @@ describe('PlayEvents (e2e)', () => {
           .get('/v1/history/user123?limit=5001')
           .expect(400)
           .expect((res) => {
-            expect(res.body.message).toContain('limit must not be greater than 5000');
+            expect(res.body.message).toContain(
+              'limit must not be greater than 5000',
+            );
           });
       });
-
 
       it('should return 400 when cursor format is not a valid ObjectId', () => {
         return request(app.getHttpServer())
