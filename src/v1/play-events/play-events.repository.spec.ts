@@ -248,7 +248,11 @@ describe('PlayEventsRepository', () => {
         limit,
       );
 
-      expect(result).toEqual({ "items": [], "endDate": endDate.toISOString(), "startDate": startDate.toISOString() });
+      expect(result).toEqual({
+        items: [],
+        endDate: endDate.toISOString(),
+        startDate: startDate.toISOString(),
+      });
     });
 
     it('should apply correct aggregation pipeline', async () => {

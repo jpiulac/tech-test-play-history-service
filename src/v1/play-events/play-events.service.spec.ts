@@ -43,7 +43,8 @@ describe('PlayEventsService', () => {
 
   describe('createPlayEvent', () => {
     it('should create a play event successfully', async () => {
-      const eventHash = "4d3df3f2c95b61d6f37878d58bbbe65e6034dfeb44dc0e3037a6fb88ccc533c9";
+      const eventHash =
+        '4d3df3f2c95b61d6f37878d58bbbe65e6034dfeb44dc0e3037a6fb88ccc533c9';
       const createDto: CreatePlayEventDto = {
         userId: 'user123',
         contentId: 'movie456',

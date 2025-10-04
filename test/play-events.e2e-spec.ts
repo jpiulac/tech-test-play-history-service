@@ -114,9 +114,8 @@ describe('PlayEvents (e2e)', () => {
             expect(res.body.contentId).toBe(validPayload.contentId);
           });
       });
-    })
+    });
     describe('Functional Tests', () => {
-
       it('should return 201 and same response for duplicate idempotency key', async () => {
         const idempotencyKey = crypto.randomUUID();
         // first request
@@ -145,9 +144,11 @@ describe('PlayEvents (e2e)', () => {
         expect(firstResponse.body._id).toBe(secondResponse.body._id);
 
         // Verify only one record exists in database
-        const count = await playEventModel.countDocuments({ userId: 'user123' });
+        const count = await playEventModel.countDocuments({
+          userId: 'user123',
+        });
         expect(count).toBe(1);
-      })
+      });
 
       it('should return 409 with duplicate event same content hash', async () => {
         const idempotencyKey1 = crypto.randomUUID();
@@ -165,7 +166,6 @@ describe('PlayEvents (e2e)', () => {
           .send(validPayload)
           .expect(409);
       });
-
 
       it('should return 201 and create different events with different idempotency keys and different payload', async () => {
         const idempotencyKey1 = crypto.randomUUID();
@@ -187,11 +187,13 @@ describe('PlayEvents (e2e)', () => {
         expect(firstResponse.body._id).not.toBe(secondResponse.body._id);
 
         // Verify two records exist in database
-        const count = await playEventModel.countDocuments({ userId: 'user123' });
+        const count = await playEventModel.countDocuments({
+          userId: 'user123',
+        });
         expect(count).toBe(2);
       });
-    })
-  })
+    });
+  });
 
   describe('GET /v1/history/:userId', () => {
     describe('Validation Tests', () => {
@@ -200,7 +202,9 @@ describe('PlayEvents (e2e)', () => {
           .get('/v1/history/user123?limit=not-a-number')
           .expect(400)
           .expect((res) => {
-            expect(res.body.message).toContain('limit must be an integer number');
+            expect(res.body.message).toContain(
+              'limit must be an integer number',
+            );
           });
       });
 
@@ -218,7 +222,9 @@ describe('PlayEvents (e2e)', () => {
           .get('/v1/history/user123?cursor=not-a-valid-objectid')
           .expect(400)
           .expect((res) => {
-            expect(res.body.message).toContain('Invalid cursor format. Must be a valid MongoDB ObjectId.');
+            expect(res.body.message).toContain(
+              'Invalid cursor format. Must be a valid MongoDB ObjectId.',
+            );
           });
       });
 
@@ -253,7 +259,7 @@ describe('PlayEvents (e2e)', () => {
             expect(res.body).toHaveProperty('items');
           });
       });
-    })
+    });
     describe('Functional Tests', () => {
       beforeEach(async () => {
         // Setup test data
@@ -362,7 +368,9 @@ describe('PlayEvents (e2e)', () => {
 
         expect(secondPage.body.items.length).toBe(1);
         // Verify we got different items
-        expect(secondPage.body.items[0]._id).not.toBe(firstPage.body.items[0]._id);
+        expect(secondPage.body.items[0]._id).not.toBe(
+          firstPage.body.items[0]._id,
+        );
       });
 
       it('should only return events for the specified user', () => {
@@ -375,8 +383,7 @@ describe('PlayEvents (e2e)', () => {
             expect(res.body.items[0].contentId).toBe('movie1');
           });
       });
-
-    })
+    });
   });
 
   describe('GET /v1/history/most-watched', () => {
@@ -434,41 +441,49 @@ describe('PlayEvents (e2e)', () => {
         // Setup test data with various play counts
         const events = [
           // Movie1: 5 plays
-          ...Array(5).fill(null).map((_, i) => ({
-            userId: `user${i}`,
-            contentId: 'movie1',
-            device: 'mobile',
-            timestamp: new Date('2025-09-15T10:00:00Z'),
-            playbackDuration: 100,
-            eventHash: `eventHash1${i}`,
-          })),
+          ...Array(5)
+            .fill(null)
+            .map((_, i) => ({
+              userId: `user${i}`,
+              contentId: 'movie1',
+              device: 'mobile',
+              timestamp: new Date('2025-09-15T10:00:00Z'),
+              playbackDuration: 100,
+              eventHash: `eventHash1${i}`,
+            })),
           // Movie2: 3 plays
-          ...Array(3).fill(null).map((_, i) => ({
-            userId: `user${i}`,
-            contentId: 'movie2',
-            device: 'tv',
-            timestamp: new Date('2025-09-20T10:00:00Z'),
-            playbackDuration: 100,
-            eventHash: `eventHash2${i}`,
-          })),
+          ...Array(3)
+            .fill(null)
+            .map((_, i) => ({
+              userId: `user${i}`,
+              contentId: 'movie2',
+              device: 'tv',
+              timestamp: new Date('2025-09-20T10:00:00Z'),
+              playbackDuration: 100,
+              eventHash: `eventHash2${i}`,
+            })),
           // Movie3: 7 plays
-          ...Array(7).fill(null).map((_, i) => ({
-            userId: `user${i}`,
-            contentId: 'movie3',
-            device: 'mobile',
-            timestamp: new Date('2025-09-25T10:00:00Z'),
-            playbackDuration: 100,
-            eventHash: `eventHash3${i}`,
-          })),
+          ...Array(7)
+            .fill(null)
+            .map((_, i) => ({
+              userId: `user${i}`,
+              contentId: 'movie3',
+              device: 'mobile',
+              timestamp: new Date('2025-09-25T10:00:00Z'),
+              playbackDuration: 100,
+              eventHash: `eventHash3${i}`,
+            })),
           // Movie4: 2 plays (outside date range)
-          ...Array(2).fill(null).map((_, i) => ({
-            userId: `user${i}`,
-            contentId: 'movie4',
-            device: 'mobile',
-            timestamp: new Date('2025-10-01T10:00:00Z'),
-            playbackDuration: 100,
-            eventHash: `eventHash4${i}`,
-          })),
+          ...Array(2)
+            .fill(null)
+            .map((_, i) => ({
+              userId: `user${i}`,
+              contentId: 'movie4',
+              device: 'mobile',
+              timestamp: new Date('2025-10-01T10:00:00Z'),
+              playbackDuration: 100,
+              eventHash: `eventHash4${i}`,
+            })),
         ];
 
         await playEventModel.insertMany(events);
@@ -503,7 +518,9 @@ describe('PlayEvents (e2e)', () => {
           .expect(200)
           .expect((res) => {
             // Should not include movie4 which is in October
-            const movie4 = res.body.items.find(item => item.contentId === 'movie4');
+            const movie4 = res.body.items.find(
+              (item) => item.contentId === 'movie4',
+            );
             expect(movie4).toBeUndefined();
           });
       });
@@ -545,11 +562,12 @@ describe('PlayEvents (e2e)', () => {
           .query({ from: '2025-09-01', to: '2025-09-30' })
           .expect(200);
 
-        const movie1 = response.body.items.find(item => item.contentId === 'movie1');
+        const movie1 = response.body.items.find(
+          (item) => item.contentId === 'movie1',
+        );
         // Should now have 7 plays (5 original + 2 new)
         expect(movie1.totalPlayCount).toBe(7);
       });
-
     });
   });
 
@@ -588,7 +606,9 @@ describe('PlayEvents (e2e)', () => {
       });
 
       it('should return 200 and anonymize user history', async () => {
-        const count = await playEventModel.countDocuments({ userId: 'user123' });
+        const count = await playEventModel.countDocuments({
+          userId: 'user123',
+        });
         expect(count).toBe(2);
 
         return request(app.getHttpServer())
@@ -596,14 +616,18 @@ describe('PlayEvents (e2e)', () => {
           .expect(200)
           .then(async () => {
             //simulate wait for async operation
-            await new Promise(resolve => setTimeout(resolve, 1000));
-            const countAfter = await playEventModel.countDocuments({ userId: 'user123' });
+            await new Promise((resolve) => setTimeout(resolve, 1000));
+            const countAfter = await playEventModel.countDocuments({
+              userId: 'user123',
+            });
             expect(countAfter).toBe(0);
-          })
-      })
+          });
+      });
 
       it('should return 200 and no anonymize user history for other users', async () => {
-        const count = await playEventModel.countDocuments({ userId: 'user123' });
+        const count = await playEventModel.countDocuments({
+          userId: 'user123',
+        });
         expect(count).toBe(2);
 
         return request(app.getHttpServer())
@@ -611,14 +635,18 @@ describe('PlayEvents (e2e)', () => {
           .expect(200)
           .then(async () => {
             //simulate wait for async operation
-            await new Promise(resolve => setTimeout(resolve, 1000));
-            const countAfter = await playEventModel.countDocuments({ userId: 'user789' });
+            await new Promise((resolve) => setTimeout(resolve, 1000));
+            const countAfter = await playEventModel.countDocuments({
+              userId: 'user789',
+            });
             expect(countAfter).toBe(1);
-          })
-      })
+          });
+      });
 
       it('should return 200 and set userId to user-deleted', async () => {
-        const count = await playEventModel.countDocuments({ userId: 'user123' });
+        const count = await playEventModel.countDocuments({
+          userId: 'user123',
+        });
         expect(count).toBe(2);
 
         return request(app.getHttpServer())
@@ -626,21 +654,21 @@ describe('PlayEvents (e2e)', () => {
           .expect(200)
           .then(async () => {
             //simulate wait for async operation
-            await new Promise(resolve => setTimeout(resolve, 1000));
-            const countAfter = await playEventModel.countDocuments({ userId: 'user-deleted' });
+            await new Promise((resolve) => setTimeout(resolve, 1000));
+            const countAfter = await playEventModel.countDocuments({
+              userId: 'user-deleted',
+            });
             expect(countAfter).toBe(2);
-          })
-      })
-    })
+          });
+      });
+    });
   });
 
-
   describe('GET /health', () => {
-
     it('should return 200 OK and "connected" when database is available', async () => {
       // The connection is alive from the beforeAll setup
       const response = await request(app.getHttpServer())
-        .get("/health")
+        .get('/health')
         .expect(200);
 
       expect(response.body.status).toBe('ok');
@@ -648,7 +676,6 @@ describe('PlayEvents (e2e)', () => {
       expect(response.body).toHaveProperty('timestamp');
     });
 
-   // TODO: Add test to validate invalid connection state
+    // TODO: Add test to validate invalid connection state
   });
-
 });

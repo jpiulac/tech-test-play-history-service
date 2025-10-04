@@ -271,14 +271,12 @@ describe('PlayEventsController', () => {
 
   describe('PATCH /v1/{userId}', () => {
     it('should trigger anonymization for a user', async () => {
-
       mockService.triggerAnonymization.mockResolvedValue(undefined);
       await controller.triggerGdprAnonymization('user123');
       expect(mockService.triggerAnonymization).toHaveBeenCalledWith('user123');
     });
 
     it('should not return any data on successful anonymization', async () => {
-
       mockService.triggerAnonymization.mockResolvedValue(undefined);
       const result = await controller.triggerGdprAnonymization('user123');
       expect(result).toBeUndefined();
