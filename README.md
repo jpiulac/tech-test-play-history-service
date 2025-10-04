@@ -25,9 +25,6 @@ A RESTful API service for tracking and managing user play history events with su
 # Install dependencies
 npm install
 
-# Copy environment file
-cp .env.example .env
-
 # Start MongoDB and application
 docker compose up
 ```
@@ -39,20 +36,26 @@ Swagger documentation: `http://localhost:3000/api-docs`
 ### Local Development
 
 ```bash
-# Run without Docker
-npm run start:dev
+docker compose up mongo_db
 
-# Or with Docker
-docker compose up
+# Run app without Docker
+MONGODB_URI="mongodb://localhost:27017/play_history_db" npm run start:dev npm run start:dev
 ```
 
-### Environment Variables
+### Other environment Variables defined
+
+.env file not needed for 
 
 ```env
 MONGODB_URI=mongodb://localhost:27017/play_history_db
 PORT=3000
 ALLOWED_ORIGINS=http://localhost:3000
 ```
+
+
+
+
+
 
 ## API Endpoints
 
@@ -94,6 +97,44 @@ PATCH /v1/history/:userId
 GET /health
 ```
 
+## Testing
+
+### Unit Tests
+
+```bash
+# Run all unit tests
+npm run test
+
+# Watch mode
+npm run test:watch
+
+# Coverage
+npm run test:cov
+```
+
+### E2E Tests
+
+```bash
+# Start test database and run E2E tests
+npm run test:e2e:docker
+
+# Or manually
+docker-compose -f docker-compose.test.yml up -d
+npm run test:e2e
+docker-compose -f docker-compose.test.yml down -v
+```
+
+### Linting
+
+```bash
+# Lint
+npm run lint
+
+# Format with Prettier
+npm run format
+```
+
+
 ## Architecture & Design Decisions
 
 ### 1. **Event Hash for Duplicate Detection**
@@ -110,7 +151,7 @@ const hash = generateContentHash(playEvent);
 **Benefits:**
 - Prevents logical duplicates even with different idempotency keys
 - MongoDB handles deduplication at database level
-- Supports distributed systems
+- Supports distributed systems, and potential sharding on userId
 
 **MongoDB Index:**
 ```javascript
@@ -126,6 +167,7 @@ const hash = generateContentHash(playEvent);
 **Current Implementation:**
 - In-memory Map for idempotency tracking
 - Returns cached response for duplicate keys
+- Client receives 201 request with expected data 
 
 **Production Recommendation:**
 ```typescript
@@ -221,42 +263,6 @@ Response:
 - MongoDB connection state
 - Ready for Kubernetes liveness/readiness probes
 
-## Testing
-
-### Unit Tests
-
-```bash
-# Run all unit tests
-npm run test
-
-# Watch mode
-npm run test:watch
-
-# Coverage
-npm run test:cov
-```
-
-### E2E Tests
-
-```bash
-# Start test database and run E2E tests
-npm run test:e2e:docker
-
-# Or manually
-docker-compose -f docker-compose.test.yml up -d
-npm run test:e2e
-docker-compose -f docker-compose.test.yml down -v
-```
-
-### Linting
-
-```bash
-# Lint
-npm run lint
-
-# Format with Prettier
-npm run format
-```
 
 ## Known Limitations
 
