@@ -69,8 +69,13 @@ GET /v1/history/:userId?limit=20&cursor=<cursor>
 
 #### Get Most Watched Content
 ```bash
-GET /v1/history/most-watched?from=2025-09-01T00:00:00Z&to=2025-09-30T23:59:59Z
+GET /v1/history/most-watched?from=2025-09-01T00:00:00Z&to=2025-09-30T23:59:59Z&limit=20
 ```
+
+**Query Parameters:**
+- `from` (required): Start date in ISO 8601 format (UTC)
+- `to` (required): End date in ISO 8601 format (UTC)
+- `limit` (optional): Number of results to return (default: 200, min: 1, max: 5000)
 
 #### Anonymize User Data (GDPR)
 ```bash
@@ -154,9 +159,13 @@ db.find({ _id: { $gt: cursor } }).sort({ timestamp: -1 }).limit(20)
       totalPlayCount: { $sum: 1 } 
   }},
   { $sort: { totalPlayCount: -1 } },
-  { $limit: 20 }
+  { $limit: limit } // Configurable: default 200, max 5000
 ]
 ```
+
+**Query Parameters:**
+- `from`, `to`: ISO 8601 date range (required)
+- `limit`: Results to return (optional, default: 200, min: 1, max: 5000)
 
 **Indexes:**
 - `contentId_1` for grouping
