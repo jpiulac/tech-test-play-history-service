@@ -7,6 +7,7 @@ import {
   Headers,
   Param,
   Query,
+  Patch,
 } from '@nestjs/common';
 import {
   ApiOperation,
@@ -16,15 +17,15 @@ import {
   ApiParam,
   ApiQuery,
 } from '@nestjs/swagger';
+import { HttpStatus } from '@nestjs/common';
+
 import { PlayEventsService } from '@app/v1/play-events/play-events.service';
-// import { PlayEventDto } from './dto/play-event.dto';
-import { CreatePlayEventDto } from '@app/v1/play-events/dto/create-play-event.dto';
-import { CreatePlayEventResponseDto } from './dto/create-play-event-response.dto';
-import { PlayEventsHistoryResponseDto } from '@app/v1/play-events/dto/play-events-history-response.dto';
-// import { DateRangeDto } from '../../dto/date-range.dto';
+import { CreatePlayEventDto } from '@app/v1/play-events/dto/create-play-event.req.dto';
+import { CreatePlayEventResponseDto } from './dto/create-play-event.res.dto';
+import { PlayEventHistoryResponseWrapperDto } from '@app/v1/play-events/dto/play-event-history.res.wrapper.dto';
 import { CursorRangeDto } from '@app/common/dto/cursor-range.dto';
 import { IdempotencyGuard } from '@app/common/guards/idempotency-guard';
-import { MostWatchedResponseDto } from '@app/v1/play-events/dto/most-watched-response.dto';
+import { PlayEventMostWatchedResponseWrapperDto } from '@app/v1/play-events/dto/play-event-most-watched.res.wrapper.dto';
 import { DateRangeDto } from '@app/common/dto/date-range.dto';
 
 @ApiTags('Play-Events')
@@ -71,7 +72,7 @@ export class PlayEventsController {
   @ApiResponse({
     status: 200,
     description: 'Most watched content retrieved successfully',
-    type: [MostWatchedResponseDto],
+    type: [PlayEventMostWatchedResponseWrapperDto],
   })
   @ApiResponse({
     status: 400,
@@ -79,7 +80,7 @@ export class PlayEventsController {
   })
   async getMostWatched(
     @Query() dateRangeDto: DateRangeDto,
-  ): Promise<MostWatchedResponseDto[]> {
+  ): Promise<PlayEventMostWatchedResponseWrapperDto> {
     return await this.playService.getMostWatched(dateRangeDto);
   }
 
@@ -96,7 +97,7 @@ export class PlayEventsController {
   @ApiResponse({
     status: 200,
     description: 'Play history retrieved successfully',
-    type: PlayEventsHistoryResponseDto,
+    type: PlayEventHistoryResponseWrapperDto,
   })
   @ApiResponse({
     status: 404,
@@ -110,7 +111,31 @@ export class PlayEventsController {
   async getUserHistory(
     @Param('userId') userId: string,
     @Query() cursorRangeDto: CursorRangeDto,
-  ): Promise<PlayEventsHistoryResponseDto> {
+  ): Promise<PlayEventHistoryResponseWrapperDto> {
     return await this.playService.getUserHistory(userId, cursorRangeDto);
+  }
+
+  @Patch('history/:userId')
+  @ApiOperation({
+    summary:
+      'Triggers the asynchronous anonymization of a user record (Right to be Forgotten).',
+    description:
+      'Replaces the user ID token in all history records with a non-identifiable placeholder ("user-deleted"). Returns 202 ACCEPTED.',
+  })
+  @ApiResponse({
+    status: HttpStatus.ACCEPTED,
+    description: 'Anonymization job successfully initiated.',
+  })
+  @ApiParam({
+    name: 'userId',
+    description: 'Unique identifier for the user',
+    example: 'user123',
+  })
+  // IMPORTANT: For production, this endpoint would be secured with an Admin/System role guard.
+  // TODO: add Admin/System role guard
+  async triggerGdprAnonymization(
+    @Param('userId') userId: string,
+  ): Promise<void> {
+    return await this.playService.triggerAnonymization(userId);
   }
 }

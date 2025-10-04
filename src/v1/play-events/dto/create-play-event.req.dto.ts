@@ -37,11 +37,12 @@ export class CreatePlayEventDto {
   device: string;
 
   @ApiProperty({
-    description: 'ISO 8601 timestamp of when the play event occurred',
+    description:
+      'Start date of the time range (Must be ISO 8601 / UTC format ending in Z)',
     example: '2025-09-30T12:00:00Z',
   })
   @Transform(({ value }: { value: string }) => value?.trim())
-  @IsDateString()
+  @IsDateString({ strict: true })
   @IsNotEmpty()
   timestamp: string;
 

@@ -10,6 +10,14 @@
   "moduleNameMapper": {
     "^@app/(.*)$": "<rootDir>/../src/$1"
   },
-  "setupFilesAfterEnv": ["<rootDir>/setup-tests.ts"]
+  "testTimeout": 30000,
+  "setupFiles": ["./jest-setup.js"]
+  // "collectCoverage": true,
+  // "collectCoverageFrom": [
+  //   "src/**/*.ts",
+  //   "!src/**/*.module.ts",
+  //   "!src/main.ts",
+  //   "!src/config/**"
+  // ]
 }
 

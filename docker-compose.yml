@@ -1,22 +1,15 @@
-version: '3.8'
+
 
 services:
-  # 1. MongoDB Database Service
   mongo_db:
-    image: mongo:6.0 
+    image: mongo:7.0 
     container_name: play-history-db
     restart: always
     ports:
       - 27017:27017
     volumes:
       - mongo_data:/data/db
-    environment:
-      MONGO_INITDB_ROOT_USERNAME: user
-      MONGO_INITDB_ROOT_PASSWORD: password
-
-  # 2. NestJS Application Service
   app:
-    # Build using the 'development' stage for faster local iteration
     build:
       context: . 
       target: development
@@ -25,18 +18,14 @@ services:
       - 3000:3000 
     depends_on:
       - mongo_db # Ensure DB starts before the app tries to connect
-    # Load environment variables from .env file
-    env_file:
-      - ./.env
     environment:
-      # This explicitly sets the host name to the Docker service name ('mongo_db')
-      # for containers talking to each other.
-      MONGODB_URI: mongodb://user:password@mongo_db:27017/play_history_db
+      MONGODB_URI: mongodb://mongo_db:27017/play_history_db
       PORT: 3000
     volumes:
-      # Mount source code (excluding node_modules) for live reloading during development
       - .:/app
-      - /app/node_modules 
+      - node_modules:/app/node_modules  
 
 volumes:
   mongo_data:
+  node_modules: 
+

@@ -4,7 +4,10 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { PlayEventsController } from '@app/v1/play-events/play-events.controller';
 import { PlayEventsService } from '@app/v1/play-events/play-events.service';
 import { PlayEventsRepository } from '@app/v1/play-events/play-events.repository';
-import { PlayEvent, PlayEventSchema } from '@app/v1/play-events/schema/play-event.schema';
+import {
+  PlayEvent,
+  PlayEventSchema,
+} from '@app/v1/play-events/schema/play-event.schema';
 import { CommonModule } from '@app/common/common.module';
 
 @Module({

@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { PlayEventHistoryResponseDto } from '@app/v1/play-events/dto/play-event-history-response.dto';
+import { PlayEventHistoryResponseDto } from '@app/v1/play-events/dto/play-event-history.res.dto';
 import {
   IsString,
   IsNumber,
@@ -8,7 +8,7 @@ import {
   Min,
 } from 'class-validator';
 
-export class PlayEventsHistoryResponseDto {
+export class PlayEventHistoryResponseWrapperDto {
   @ApiProperty({
     description: 'List of play events',
     type: [PlayEventHistoryResponseDto],

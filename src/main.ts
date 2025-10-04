@@ -19,7 +19,7 @@ const swagger_docs = (app: NestExpressApplication) => {
   SwaggerModule.setup('api-docs', app, document);
 };
 
-async function bootstrap() {
+async function bootstrap(): Promise<void> {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
 
   app.useGlobalFilters(new GlobalExceptionFilter());
@@ -38,14 +38,31 @@ async function bootstrap() {
 
   // Enable CORS for all origins (adjust as needed)
   app.enableCors({
-    origin: '*',
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+    origin: process.env.ALLOWED_ORIGINS?.split(',') || [
+      'http://localhost:3000',
+    ],
+    credentials: true,
+    methods: ['GET', 'POST', 'PATCH'],
   });
 
   swagger_docs(app);
   const port = process.env.PORT ?? 3000;
-  await app.listen(port);
+  // await app.listen(port);
+  app.enableShutdownHooks();
+  await app.listen(port, '0.0.0.0');
   logger.log(`Application started on port: ${port}`);
+
+  // Graceful shutdown
+  process.on('SIGTERM', () => {
+    logger.log('SIGTERM received, shutting down gracefully...');
+    app
+      .close()
+      .then(() => process.exit(0))
+      .catch((err) => {
+        logger.error('Error shutting down:', err);
+        process.exit(1);
+      });
+  });
 }
 
 bootstrap().catch((err) => {
