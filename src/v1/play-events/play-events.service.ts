@@ -6,7 +6,7 @@ import { CursorRangeDto } from '@app/common/dto/cursor-range.dto';
 import { PlayEventHistoryResponseWrapperDto } from '@app/v1/play-events/dto/play-event-history.res.wrapper.dto';
 import { PlayEventHistoryResponseDto } from '@app/v1/play-events/dto/play-event-history.res.dto';
 import { PlayEventDocument } from '@app/v1/play-events/schema/play-event.schema';
-import { DateRangeDto } from '@app/common/dto/date-range.dto';
+import { DateRangeWithLimitDto } from '@app/common/dto/date-range-with-limit.dto';
 import { PlayEventMostWatchedResponseWrapperDto } from '@app/v1/play-events/dto/play-event-most-watched.res.wrapper.dto';
 import { Logger } from '@nestjs/common';
 import { createHash } from 'crypto';
@@ -127,23 +127,25 @@ export class PlayEventsService {
   }
 
   async getMostWatched(
-    dateRangeDto: DateRangeDto,
+    dateRangeDto: DateRangeWithLimitDto,
+    limit: number,
   ): Promise<PlayEventMostWatchedResponseWrapperDto> {
     this.logger.log(
-      `[PlayEventsService.getMostWatched] Finding most watched content for date range ${dateRangeDto.from} to ${dateRangeDto.to}.`,
+      `[PlayEventsService.getMostWatched] Finding most watched content for date range ${dateRangeDto.from} to ${dateRangeDto.to} with limit ${limit}.`,
     );
     const startDate = new Date(dateRangeDto.from);
     const endDate = new Date(dateRangeDto.to);
     if (startDate >= endDate) {
       throw new BadRequestException('"from" date must be before "to" date');
     }
+   
     this.logger.log(
       `[PlayEventsServicegetMostWatched] Start date: ${startDate.toISOString()}, End date: ${endDate.toISOString()}.`,
     );
     return await this.playRepository.findMostWatchedContent(
       startDate,
       endDate,
-      20,
+      limit,
     );
   }
 

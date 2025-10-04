@@ -14,15 +14,15 @@ export class CursorRangeDto {
   // TODO: cant get min max to work in swagger
   @ApiProperty({
     description:
-      'Maximum number of records to return (defaults to 20), [minimum 1, maximum 500].',
-    default: 20,
+      'Maximum number of records to return (defaults to 200), [minimum 1, maximum 5000].',
+    default: 200,
     minimum: 1,
-    maximum: 500,
+    maximum: 5000,
   })
   @IsOptional()
   @IsInt()
   @Type(() => Number)
   @Min(1)
-  @Max(500)
-  limit: number = 20;
+  @Max(5000)
+  limit: number = 200;
 }

@@ -222,7 +222,7 @@ describe('PlayEventsController', () => {
 
       const result = await controller.getMostWatched(dateRange);
 
-      expect(mockService.getMostWatched).toHaveBeenCalledWith(dateRange);
+      expect(mockService.getMostWatched).toHaveBeenCalledWith(dateRange, 200);
       expect(result).toEqual(mockMostWatched);
       expect(result).toHaveLength(3);
     });
@@ -265,7 +265,7 @@ describe('PlayEventsController', () => {
 
       await controller.getMostWatched(dateRange);
 
-      expect(mockService.getMostWatched).toHaveBeenCalledWith(dateRange);
+      expect(mockService.getMostWatched).toHaveBeenCalledWith(dateRange, 200);
     });
   });
 

@@ -217,6 +217,16 @@ describe('PlayEvents (e2e)', () => {
           });
       });
 
+      it('should return 400 when limit is greater than 5000', () => {
+        return request(app.getHttpServer())
+          .get('/v1/history/user123?limit=5001')
+          .expect(400)
+          .expect((res) => {
+            expect(res.body.message).toContain('limit must not be greater than 5000');
+          });
+      });
+
+
       it('should return 400 when cursor format is not a valid ObjectId', () => {
         return request(app.getHttpServer())
           .get('/v1/history/user123?cursor=not-a-valid-objectid')
@@ -393,6 +403,47 @@ describe('PlayEvents (e2e)', () => {
           .get('/v1/history/most-watched')
           .query({ from: '09/01/2025', to: '09/30/2025' }) // MM/DD/YYYY format
           .expect(400);
+      });
+
+      it('should return 400 when limit is not a number', () => {
+        return request(app.getHttpServer())
+          .get('/v1/history/most-watched')
+          .query({
+            from: '2025-09-01T00:00:00Z',
+            to: '2025-09-30T23:59:59Z',
+            limit: 'not-a-number',
+          })
+          .expect(400);
+      });
+
+      it('should return 400 when limit is not a positive number', () => {
+        return request(app.getHttpServer())
+          .get('/v1/history/most-watched')
+          .query({
+            from: '2025-09-01T00:00:00Z',
+            to: '2025-09-30T23:59:59Z',
+            limit: 0,
+          })
+          .expect(400)
+          .expect((res) => {
+            expect(res.body.message).toContain('limit must not be less than 1');
+          });
+      });
+
+      it('should return 400 when limit is greater than 5000', () => {
+        return request(app.getHttpServer())
+          .get('/v1/history/most-watched')
+          .query({
+            from: '2025-09-01T00:00:00Z',
+            to: '2025-09-30T23:59:59Z',
+            limit: 5001,
+          })
+          .expect(400)
+          .expect((res) => {
+            expect(res.body.message).toContain(
+              'limit must not be greater than 5000',
+            );
+          });
       });
 
       it('should return 400 when from/to dates are missing', () => {

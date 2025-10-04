@@ -42,20 +42,6 @@ docker compose up mongo_db
 MONGODB_URI="mongodb://localhost:27017/play_history_db" npm run start:dev npm run start:dev
 ```
 
-### Other environment Variables defined
-
-.env file not needed for 
-
-```env
-MONGODB_URI=mongodb://localhost:27017/play_history_db
-PORT=3000
-ALLOWED_ORIGINS=http://localhost:3000
-```
-
-
-
-
-
 
 ## API Endpoints
 
@@ -95,43 +81,6 @@ PATCH /v1/history/:userId
 
 ```bash
 GET /health
-```
-
-## Testing
-
-### Unit Tests
-
-```bash
-# Run all unit tests
-npm run test
-
-# Watch mode
-npm run test:watch
-
-# Coverage
-npm run test:cov
-```
-
-### E2E Tests
-
-```bash
-# Start test database and run E2E tests
-npm run test:e2e:docker
-
-# Or manually
-docker-compose -f docker-compose.test.yml up -d
-npm run test:e2e
-docker-compose -f docker-compose.test.yml down -v
-```
-
-### Linting
-
-```bash
-# Lint
-npm run lint
-
-# Format with Prettier
-npm run format
 ```
 
 

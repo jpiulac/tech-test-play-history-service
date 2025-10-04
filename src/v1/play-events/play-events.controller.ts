@@ -26,7 +26,7 @@ import { PlayEventHistoryResponseWrapperDto } from '@app/v1/play-events/dto/play
 import { CursorRangeDto } from '@app/common/dto/cursor-range.dto';
 import { IdempotencyGuard } from '@app/common/guards/idempotency-guard';
 import { PlayEventMostWatchedResponseWrapperDto } from '@app/v1/play-events/dto/play-event-most-watched.res.wrapper.dto';
-import { DateRangeDto } from '@app/common/dto/date-range.dto';
+import { DateRangeWithLimitDto } from '@app/common/dto/date-range-with-limit.dto';
 
 @ApiTags('Play-Events')
 @Controller('v1')
@@ -79,9 +79,9 @@ export class PlayEventsController {
     description: 'Bad Request - Invalid date format or range',
   })
   async getMostWatched(
-    @Query() dateRangeDto: DateRangeDto,
+    @Query() queryDto: DateRangeWithLimitDto,
   ): Promise<PlayEventMostWatchedResponseWrapperDto> {
-    return await this.playService.getMostWatched(dateRangeDto);
+    return await this.playService.getMostWatched(queryDto, queryDto.limit ?? 200);
   }
 
   @Get('history/:userId')
@@ -106,7 +106,7 @@ export class PlayEventsController {
   @ApiQuery({
     name: 'limit',
     required: false,
-    schema: { type: 'integer', minimum: 1, maximum: 500, default: 20 },
+    schema: { type: 'integer', minimum: 1, maximum: 1000, default: 200 },
   })
   async getUserHistory(
     @Param('userId') userId: string,

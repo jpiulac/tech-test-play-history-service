@@ -319,7 +319,7 @@ describe('PlayEventsService', () => {
       ];
 
       mockRepository.findMostWatchedContent.mockResolvedValue(mockMostWatched);
-      const result = await service.getMostWatched(dateRangeDto);
+      const result = await service.getMostWatched(dateRangeDto, 20);
 
       expect(result).toEqual(mockMostWatched);
       expect(mockRepository.findMostWatchedContent).toHaveBeenCalledWith(
@@ -338,7 +338,7 @@ describe('PlayEventsService', () => {
         to: '2025-08-31',
       };
       mockRepository.findMostWatchedContent.mockResolvedValue([]);
-      const result = await service.getMostWatched(dateRangeDto);
+      const result = await service.getMostWatched(dateRangeDto, 20);
 
       expect(result).toEqual([]);
     });
@@ -349,7 +349,7 @@ describe('PlayEventsService', () => {
         to: '2025-09-30',
       };
       mockRepository.findMostWatchedContent.mockResolvedValue([]);
-      await service.getMostWatched(dateRangeDto);
+      await service.getMostWatched(dateRangeDto, 20);
 
       const callArgs = mockRepository.findMostWatchedContent.mock.calls[0];
       expect(callArgs[0]).toBeInstanceOf(Date);
