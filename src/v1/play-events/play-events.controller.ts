@@ -123,7 +123,7 @@ export class PlayEventsController {
       'Replaces the user ID token in all history records with a non-identifiable placeholder ("user-deleted"). Returns 202 ACCEPTED.',
   })
   @ApiResponse({
-    status: HttpStatus.ACCEPTED,
+    status: HttpStatus.OK,
     description: 'Anonymization job successfully initiated.',
   })
   @ApiParam({
