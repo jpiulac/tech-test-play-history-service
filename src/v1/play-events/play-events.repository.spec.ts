@@ -10,16 +10,23 @@ describe('PlayEventsRepository', () => {
   let repository: PlayEventsRepository;
   let model: any;
 
-  // Create a mock constructor function
-  const mockPlayEventModel = jest.fn().mockImplementation(() => ({
-    save: jest.fn(),
-  }));
+  //Create mock constructor
+  const mockPlayEventModel = jest.fn().mockImplementation((data) => ({
+    ...data,
+    save: jest.fn().mockImplementation(function() {
+      return this;
+    }),
+  })) as jest.Mock & {
+    find: jest.Mock;
+    aggregate: jest.Mock;
+    updateMany: jest.Mock;
+  };
 
-  // Add methods to the constructor
+  // Add static methods
   mockPlayEventModel.find = jest.fn();
   mockPlayEventModel.aggregate = jest.fn();
   mockPlayEventModel.updateMany = jest.fn();
-
+ 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
@@ -57,17 +64,17 @@ describe('PlayEventsRepository', () => {
         ...playEventData,
       };
 
-      const mockInstance = {
-        save: jest.fn().mockResolvedValue(mockSavedEvent),
-      };
-
-      // Reset and configure the mock for this test
-      model.mockImplementationOnce(() => mockInstance);
+      // Configure the instance save method to return our mock event
+      const saveMock = jest.fn().mockResolvedValueOnce(mockSavedEvent);
+      mockPlayEventModel.mockImplementationOnce(() => ({
+        ...playEventData,
+        save: saveMock,
+      }));
 
       const result = await repository.create(playEventData);
 
-      expect(model).toHaveBeenCalledWith(playEventData);
-      expect(mockInstance.save).toHaveBeenCalled();
+      expect(mockPlayEventModel).toHaveBeenCalledWith(playEventData);
+      expect(saveMock).toHaveBeenCalled();
       expect(result).toEqual(mockSavedEvent);
       expect(Logger.prototype.log).toHaveBeenCalledWith(
         expect.stringContaining('Creating play event for user user123'),

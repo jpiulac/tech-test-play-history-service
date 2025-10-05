@@ -11,7 +11,7 @@ export class CursorRangeDto {
   @IsString()
   cursor?: string;
 
-  // TODO: cant get min max to work in swagger
+  // TODO: cant get min max to show in swagger but validation works
   @ApiProperty({
     description:
       'Maximum number of records to return (defaults to 200), [minimum 1, maximum 5000].',

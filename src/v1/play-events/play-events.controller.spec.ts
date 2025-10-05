@@ -210,7 +210,7 @@ describe('PlayEventsController', () => {
 
   describe('GET /v1/history/most-watched', () => {
     it('should return most watched content', async () => {
-      const dateRange = { from: '2025-09-01', to: '2025-09-30' };
+      const dateRange = { from: '2025-09-01', to: '2025-09-30', limit: 200 };
 
       const mockMostWatched = [
         { contentId: 'movie456', totalPlayCount: 10 },
@@ -222,13 +222,13 @@ describe('PlayEventsController', () => {
 
       const result = await controller.getMostWatched(dateRange);
 
-      expect(mockService.getMostWatched).toHaveBeenCalledWith(dateRange, 200);
+      expect(mockService.getMostWatched).toHaveBeenCalledWith(dateRange);
       expect(result).toEqual(mockMostWatched);
       expect(result).toHaveLength(3);
     });
 
     it('should return results sorted by play count descending', async () => {
-      const dateRange = { from: '2025-09-01', to: '2025-09-30' };
+      const dateRange = { from: '2025-09-01', to: '2025-09-30', limit: 200 };
 
       const mockMostWatched = [
         { contentId: 'movie1', totalPlayCount: 100 },
@@ -249,7 +249,7 @@ describe('PlayEventsController', () => {
     });
 
     it('should return empty array when no content watched in range', async () => {
-      const dateRange = { from: '2025-08-01', to: '2025-08-31' };
+      const dateRange = { from: '2025-08-01', to: '2025-08-31', limit: 200 };
 
       mockService.getMostWatched.mockResolvedValue([]);
 
@@ -258,14 +258,24 @@ describe('PlayEventsController', () => {
       expect(result).toEqual([]);
     });
 
-    it('should pass date range to service', async () => {
+    it('should use default limit when not provided', async () => {
       const dateRange = { from: '2025-09-15', to: '2025-09-20' };
 
       mockService.getMostWatched.mockResolvedValue([]);
 
       await controller.getMostWatched(dateRange);
 
-      expect(mockService.getMostWatched).toHaveBeenCalledWith(dateRange, 200);
+      expect(mockService.getMostWatched).toHaveBeenCalledWith(dateRange);
+    });
+
+    it('should pass date range to service', async () => {
+      const dateRange = { from: '2025-09-15', to: '2025-09-20', limit: 200 };
+
+      mockService.getMostWatched.mockResolvedValue([]);
+
+      await controller.getMostWatched(dateRange);
+
+      expect(mockService.getMostWatched).toHaveBeenCalledWith(dateRange);
     });
   });
 

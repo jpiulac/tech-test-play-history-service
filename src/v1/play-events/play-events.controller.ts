@@ -89,10 +89,7 @@ export class PlayEventsController {
   async getMostWatched(
     @Query() queryDto: DateRangeWithLimitDto,
   ): Promise<PlayEventMostWatchedResponseWrapperDto> {
-    return await this.playService.getMostWatched(
-      queryDto,
-      queryDto.limit ?? 200,
-    );
+    return await this.playService.getMostWatched(queryDto);
   }
 
   @Get('history/:userId')

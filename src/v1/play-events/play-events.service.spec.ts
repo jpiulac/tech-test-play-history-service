@@ -311,6 +311,7 @@ describe('PlayEventsService', () => {
       const dateRangeDto = {
         from: '2025-09-01',
         to: '2025-09-30',
+        limit: 20,
       };
       const mockMostWatched = [
         { contentId: 'movie1', totalPlayCount: 100 },
@@ -319,7 +320,7 @@ describe('PlayEventsService', () => {
       ];
 
       mockRepository.findMostWatchedContent.mockResolvedValue(mockMostWatched);
-      const result = await service.getMostWatched(dateRangeDto, 20);
+      const result = await service.getMostWatched(dateRangeDto);
 
       expect(result).toEqual(mockMostWatched);
       expect(mockRepository.findMostWatchedContent).toHaveBeenCalledWith(
@@ -336,20 +337,37 @@ describe('PlayEventsService', () => {
       const dateRangeDto = {
         from: '2025-08-01',
         to: '2025-08-31',
+        limit: 20,
       };
       mockRepository.findMostWatchedContent.mockResolvedValue([]);
-      const result = await service.getMostWatched(dateRangeDto, 20);
+      const result = await service.getMostWatched(dateRangeDto);
 
       expect(result).toEqual([]);
+    });
+
+    it('should use default limit when not provided', async () => {
+      const dateRangeDto = {
+        from: '2025-09-01',
+        to: '2025-09-30',
+      };
+      mockRepository.findMostWatchedContent.mockResolvedValue([]);
+      await service.getMostWatched(dateRangeDto);
+
+      expect(mockRepository.findMostWatchedContent).toHaveBeenCalledWith(
+        expect.any(Date),
+        expect.any(Date),
+        200, // Default limit
+      );
     });
 
     it('should convert date strings to Date objects', async () => {
       const dateRangeDto = {
         from: '2025-09-01',
         to: '2025-09-30',
+        limit: 20,
       };
       mockRepository.findMostWatchedContent.mockResolvedValue([]);
-      await service.getMostWatched(dateRangeDto, 20);
+      await service.getMostWatched(dateRangeDto);
 
       const callArgs = mockRepository.findMostWatchedContent.mock.calls[0];
       expect(callArgs[0]).toBeInstanceOf(Date);

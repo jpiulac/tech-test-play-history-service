@@ -13,14 +13,3 @@ export class PlayEventMostWatchedResponseDto {
   })
   totalPlayCount: number;
 }
-
-// export class MostWatchedResponseWrapperDto {
-//   @ApiProperty({ description: 'Response metadata', type: MetadataDto })
-//   metadata: MetadataDto;
-
-//   @ApiProperty({
-//     description: 'List of most-watched content items',
-//     type: [PlayEventMostWatchedResponseDto],
-//   })
-//   items: PlayEventMostWatchedResponseDto[];
-// }

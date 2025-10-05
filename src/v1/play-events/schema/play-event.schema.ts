@@ -29,8 +29,7 @@ export const PlayEventSchema = SchemaFactory.createForClass(PlayEvent);
 // Add indexes for common queries
 PlayEventSchema.index({ userId: 1, timestamp: -1 });
 PlayEventSchema.index({ contentId: 1 });
-// --- UNIQUE INDEX 1: Idempotency (for client retries) ---
-// PlayEventSchema.index({ idempotencyKey: 1, userId: 1 }, { unique: true });
-// --- UNIQUE INDEX 2: Content Integrity (for functional duplicates across systems) ---
+
+// --- UNIQUE INDEX: Content Integrity (for functional duplicates across systems) ---
 // Note: Includes userId (the shard key) to enforce unique constraint globally in a sharded setup.
 PlayEventSchema.index({ eventHash: 1, userId: 1 }, { unique: true });

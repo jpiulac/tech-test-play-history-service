@@ -128,10 +128,9 @@ export class PlayEventsService {
 
   async getMostWatched(
     dateRangeDto: DateRangeWithLimitDto,
-    limit: number,
   ): Promise<PlayEventMostWatchedResponseWrapperDto> {
     this.logger.log(
-      `[PlayEventsService.getMostWatched] Finding most watched content for date range ${dateRangeDto.from} to ${dateRangeDto.to} with limit ${limit}.`,
+      `[PlayEventsService.getMostWatched] Finding most watched content for date range ${dateRangeDto.from} to ${dateRangeDto.to}}.`,
     );
     const startDate = new Date(dateRangeDto.from);
     const endDate = new Date(dateRangeDto.to);
@@ -145,7 +144,7 @@ export class PlayEventsService {
     return await this.playRepository.findMostWatchedContent(
       startDate,
       endDate,
-      limit,
+      dateRangeDto.limit ?? 200,
     );
   }
 

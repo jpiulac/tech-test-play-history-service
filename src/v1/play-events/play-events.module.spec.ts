@@ -24,7 +24,6 @@ describe('PlayEventsModule', () => {
       .useModule(class MockCommonModule {})
       .overrideProvider(getModelToken(PlayEvent.name))
       .useValue(mockPlayEventModel)
-      // OPTIONAL: Override Service/Repository for safety/isolation
       .overrideProvider(PlayEventsService)
       .useValue({})
       .overrideProvider(PlayEventsRepository)
