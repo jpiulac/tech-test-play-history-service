@@ -210,6 +210,11 @@ db.find({ _id: { $gt: cursor } }).sort({ timestamp: -1 }).limit(20)
 ### 5. **GDPR Anonymization (Async Pattern)**
 
 **Current Implementation:** Synchronous PATCH endpoint returns 200 (OK)
+It updates the userId seeting it to a "user-deleted" token.
+
+NOTE: In a production sharded MongoDB setup, this approach will not work as you can not update the shard key.
+You would need a different approach such as delete each document and recreate.
+Left it out of scope for this exercise.
 
 **Production Pattern:**
 ```typescript
@@ -260,7 +265,7 @@ Response:
 
 ## Known Limitations
 
-### 1. **No Database Health Check Failure Tests**
+### **No Database Health Check Failure Tests**
 
 **Missing:** E2E tests for MongoDB connection failures
 
@@ -273,28 +278,16 @@ it('should return 503 when database is unreachable', async () => {
 });
 ```
 
-### 2. **No Authentication/Authorization** ⚠️
+### **GDPR Anonymization No Support For Sharding**
 
-**Critical Missing Feature:**
-- No user authentication
-- No JWT validation
-- No API keys
+**Missing:** Can not update a shard key in MongoDB e.g. UserId
 
-**Production Requirements:**
-```typescript
-@UseGuards(JwtAuthGuard, RolesGuard)
-@Roles('user', 'admin')
-async getUserHistory(@User() user, @Param('userId') userId) {
-  // Verify user.id === userId or user has admin role
-}
-```
+**Solution:** 
+ - Logical delete field: is_deleted = true (with update to queries)
+ - Simply delete records and recreate (potentially a slow operation)
 
-**Recommended Stack:**
-- JWT tokens (access + refresh)
-- OAuth2/OIDC (Auth0, Keycloak)
-- API Gateway for centralized auth
 
-### 3. **In-Memory Idempotency Cache**
+### **In-Memory Idempotency Cache Only**
 
 **Current:** Single-instance Map
 
@@ -317,7 +310,29 @@ export class IdempotencyService {
 }
 ```
 
-### 4. **No Rate Limiting per User**
+### **No Authentication/Authorization** ⚠️
+
+**Critical Missing Feature:**
+- No user authentication
+- No JWT validation
+- No API keys
+
+**Production Requirements:**
+```typescript
+@UseGuards(JwtAuthGuard, RolesGuard)
+@Roles('user', 'admin')
+async getUserHistory(@User() user, @Param('userId') userId) {
+  // Verify user.id === userId or user has admin role
+}
+```
+
+**Recommended Stack:**
+- JWT tokens (access + refresh)
+- OAuth2/OIDC (Auth0, Keycloak)
+- API Gateway for centralized auth
+
+
+### **No Rate Limiting per User**
 
 **Current:** Global rate limit (100 req/min)
 
@@ -330,31 +345,7 @@ ThrottlerModule.forRoot({
 })
 ```
 
-### 5. **No Distributed Tracing**
-
-**Missing:** Request correlation, distributed tracing
-
-**Add:** OpenTelemetry, Jaeger, or Zipkin
-
-```typescript
-import { trace } from '@opentelemetry/api';
-const span = trace.getTracer('play-history').startSpan('createPlayEvent');
-```
-
-### 6. **No Caching Layer**
-
-**Current:** Every request hits MongoDB
-
-**Add:** Redis caching for:
-- Most-watched content (1-5 min TTL)
-- User history (with cache invalidation)
-
-```typescript
-@Cacheable({ ttl: 300, key: 'most-watched:${from}:${to}' })
-async getMostWatched(from: Date, to: Date) { ... }
-```
-
-### 7. **No Metrics/Monitoring**
+### **No Metrics/Monitoring**
 
 **Missing:**
 - Prometheus metrics
@@ -370,18 +361,44 @@ export class MetricsService {
 }
 ```
 
-### 8. **No Backup Strategy**
+### **No Distributed Tracing**
+
+**Missing:** Request correlation, distributed tracing
+
+**Add:** OpenTelemetry, Jaeger, or Zipkin
+
+```typescript
+import { trace } from '@opentelemetry/api';
+const span = trace.getTracer('play-history').startSpan('createPlayEvent');
+```
+
+### **No Caching Layer**
+
+**Current:** Every request hits MongoDB
+
+**Add:** Redis caching for:
+- Most-watched content (1-5 min TTL)
+- User history (with cache invalidation)
+
+```typescript
+@Cacheable({ ttl: 300, key: 'most-watched:${from}:${to}' })
+async getMostWatched(from: Date, to: Date) { ... }
+```
+
+### **No Circuit Breaker**
+
+**Missing:** Resilience patterns for MongoDB failures
+
+**Add:** `@nestjs/terminus` with circuit breaker
+
+
+### **No Backup Strategy**
 
 **Missing:**
 - MongoDB backup procedures
 - Point-in-time recovery
 - Disaster recovery plan
 
-### 9. **No Circuit Breaker**
-
-**Missing:** Resilience patterns for MongoDB failures
-
-**Add:** `@nestjs/terminus` with circuit breaker
 
 ## Future Improvements
 
@@ -389,8 +406,9 @@ export class MetricsService {
 - [ ] Add authentication/authorization (JWT, OAuth2)
 - [ ] Implement Redis-based idempotency cache
 - [ ] Add database health check failure tests
+- [ ] Implement support for sharding GDPR anonymization 
+- [ ] Implement message queue for GDPR anonymization 
 - [ ] Implement per-user rate limiting
-- [ ] Implement message queue for GDPR anonymization
 
 
 ### Medium Priority
