@@ -19,12 +19,6 @@ Supports efficient cursor-based pagination and GDPR-compliant data deletion.
 # Install dependencies
 npm install
 
-# Environment Configuration
-Development environment variables are configured in docker-compose.yml
-Test environment requires .env.test with:
-- MONGODB_URI: MongoDB connection string for tests
-- NODE_ENV: "test"
-
 # Start MongoDB and application
 docker compose up
 ```
@@ -41,6 +35,7 @@ docker compose up mongo_db
 
 # Run app without Docker
 MONGODB_URI="mongodb://localhost:27017/play_history_db" npm run start:dev
+
 ```
 
 ## Testing
@@ -61,7 +56,11 @@ npm run test:cov
 ### E2E Tests
 
 ```bash
+
 # Create .env.test file with test configuration
+cp .env.test.example .env.test
+
+
 # Then start test database and run E2E tests
 npm run test:e2e:docker
 
