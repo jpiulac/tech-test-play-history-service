@@ -13,7 +13,7 @@ describe('PlayEventsRepository', () => {
   //Create mock constructor
   const mockPlayEventModel = jest.fn().mockImplementation((data) => ({
     ...data,
-    save: jest.fn().mockImplementation(function() {
+    save: jest.fn().mockImplementation(function () {
       return this;
     }),
   })) as jest.Mock & {
@@ -26,7 +26,7 @@ describe('PlayEventsRepository', () => {
   mockPlayEventModel.find = jest.fn();
   mockPlayEventModel.aggregate = jest.fn();
   mockPlayEventModel.updateMany = jest.fn();
- 
+
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [

@@ -38,7 +38,7 @@ export class HealthController {
       return response;
     } catch (error) {
       // If any error occurs (network, timeout, BSON),
-      // set database status to failed and throw 500 Internal Server Error 
+      // set database status to failed and throw 500 Internal Server Error
       response.status = 'unhealthy';
       this.logger.error('Health check failed due to database error:', error);
 

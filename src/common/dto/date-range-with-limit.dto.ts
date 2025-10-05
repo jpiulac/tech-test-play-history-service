@@ -31,7 +31,8 @@ export class DateRangeWithLimitDto {
   to: string;
 
   @ApiPropertyOptional({
-    description: 'Maximum number of records to return (defaults to 200), [minimum 1, maximum 5000].',
+    description:
+      'Maximum number of records to return (defaults to 200), [minimum 1, maximum 5000].',
     example: 200,
     minimum: 1,
     maximum: 5000,
