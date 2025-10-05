@@ -1,6 +1,7 @@
 # Play History Service
 
 A RESTful API for ingesting and retrieving user play data. 
+Uses the [Nest.js framework](https://nestjs.com/) with Express as its (default) backend server.
 Prevents duplicate writes and ensures reliability through content hashing and idempotency keys. 
 Supports efficient cursor-based pagination and GDPR-compliant data deletion.
 
