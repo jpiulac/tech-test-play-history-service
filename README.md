@@ -1,6 +1,8 @@
 # Play History Service
 
-A RESTful API for ingesting and retrieving user play data. Ensures reliability by preventing duplicate writes through content hashing and idempotency keys. Supports efficient cursor-based pagination and GDPR-compliant data deletion.
+A RESTful API for ingesting and retrieving user play data. 
+Prevents duplicate writes and ensures reliability through content hashing and idempotency keys. 
+Supports efficient cursor-based pagination and GDPR-compliant data deletion.
 
 ## Quick Start
 
@@ -173,9 +175,9 @@ db.find({ _id: { $gt: cursor } }).sort({ timestamp: -1 }).limit(20)
 ```
 
 **Benefits:**
-- O(1) performance regardless of page depth
-- No missed/duplicate records with concurrent writes
-- Better scalability
+- Performance regardless of page depth
+- Reduced database load
+
 
 ### 4. **MongoDB Aggregation for Analytics**
 
@@ -200,6 +202,10 @@ db.find({ _id: { $gt: cursor } }).sort({ timestamp: -1 }).limit(20)
 **Indexes:**
 - `contentId_1` for grouping
 - `timestamp_1` for date filtering
+
+**Implementation:**
+
+- Added a limit paramter to prevent large queries overloading the database 
 
 ### 5. **GDPR Anonymization (Async Pattern)**
 
