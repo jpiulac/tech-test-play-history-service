@@ -18,6 +18,10 @@ Supports efficient cursor-based pagination and GDPR-compliant data deletion.
 # Install dependencies
 npm install
 
+# Copy environment files
+cp .env.example .env
+cp .env.test.example .env.test
+
 # Start MongoDB and application
 docker compose up
 ```
@@ -54,6 +58,9 @@ npm run test:cov
 ### E2E Tests
 
 ```bash
+# Copy test environment file if not done already
+cp .env.test.example .env.test
+
 # Start test database and run E2E tests
 npm run test:e2e:docker
 
