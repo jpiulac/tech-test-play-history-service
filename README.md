@@ -272,6 +272,22 @@ Response:
 
 ## Known Limitations
 
+
+### **NoSQL Injection Vulnerability (High Priority)**
+
+**Missing:** Sanitization of user input sent to database 
+
+**Problem:** 
+- Potential for malicious input to be sent directly to MongoDB queries
+- Payloads need to be filtered to remove suspicious characters, specifically MongoDB operators like $ and . 
+- This leaves the application vulnerable to NoSQL Injection attacks
+
+**Solution:**
+- An attempt was made to integrate the standard package express-mongo-sanitize, but it caused application errors on startup
+- Implementing custom filtering would need thorough testing, so the feature was not incuded due to time constraints
+
+
+
 ### **No Database Health Check Failure Tests**
 
 **Missing:** E2E tests for MongoDB connection failures
@@ -410,6 +426,7 @@ async getMostWatched(from: Date, to: Date) { ... }
 ## Future Improvements
 
 ### High Priority
+- [ ] Input sanitation to prevent injection attacks
 - [ ] Add authentication/authorization (JWT, OAuth2)
 - [ ] Implement Redis-based idempotency cache
 - [ ] Add database health check failure tests
